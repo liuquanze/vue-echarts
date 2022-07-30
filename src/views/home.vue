@@ -158,7 +158,7 @@ export default {
         background: #071332;
 
         .ivu-modal-header {
-            border-bottom: 1px solid #1a3c58;
+            border-bottom: 1px solid #FFFFFF;
 
             .ivu-modal-header-inner {
                 color: #75deef;
@@ -183,7 +183,7 @@ export default {
                 color: #75deef;
 
                 &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-                    color: #75deef;
+                    color: #FFFFFF;
                 }
 
                 &::-moz-placeholder { /* Mozilla Firefox 4 to 18 */
@@ -200,10 +200,10 @@ export default {
             }
 
             .ivu-picker-panel-body {
-                background: #071332;
+                background: #FFFFFF;
 
                 .ivu-date-picker-header {
-                    color: #75deef;
+                    color: #FFFFFF;
                     border-bottom: 1px solid #1a3c58
                 }
 
@@ -231,7 +231,7 @@ export default {
         }
 
         .ivu-modal-footer {
-            border-top: 1px solid #1a3c58;
+            border-top: 1px solid #FFFFFF;
 
             .ivu-btn-primary {
                 color: #75deef;
@@ -253,7 +253,7 @@ export default {
 
 .header {
     height: 80px;
-    background: #03044A;
+    background: #0D1341;
     display: flex;
     justify-content: space-between;
     align-items: center;
