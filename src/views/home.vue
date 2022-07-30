@@ -12,10 +12,13 @@
                     <MenuItem name="page3">
                         page3
                     </MenuItem>
+                    <MenuItem name="page4">
+                        page4
+                   </MenuItem>
                 </Menu>
             </div>
             <div class="header-title">
-                大数据可视化平台
+                网络信息采集
             </div>
             <div class="selectRange">
                 <Menu mode="horizontal" @on-select="handleSelect" :active-name="activeName">

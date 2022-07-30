@@ -8,13 +8,18 @@ const router = new Router({
     routes: [
         {
             path: '/',
-            redirect: '/page1'
+            redirect: '/page4'
         },
         {
             path: '',
             name: 'home',
             component: home,
             children: [
+                {
+                    path: '/page4',
+                    name: 'page4',
+                    component: () => import('@/views/page4')
+                },
                 {
                     path: '/page1',
                     name: 'page1',
