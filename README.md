@@ -2,8 +2,7 @@
 
 > A Vue.js project
 数据可视化
-## 项目预览地址
-https://bym110.github.io/vue-echarts/preview
+
 ## Build Setup
 
 ``` bash
@@ -27,3 +26,5 @@ npm run build --report
 ### page3 
 ![image](src/assets/page3.jpg)
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+参照模板布局，使用echarts完成需要的网络状态数据可视化展示
