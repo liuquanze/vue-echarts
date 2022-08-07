@@ -217,10 +217,11 @@ export default {
         .bottom {
           width: 100%;
           height: 100%;
-          background: gainsboro;
+          box-shadow:inset 2px 2px 5px #000;
+          background: #FFFFFF;
           position: relative;
           border-radius: 5px;
-          box-shadow:inset 0px 15px 10px -15px #000;
+          //box-shadow:inset 0px 15px 10px -15px #000;
         }
       }
 
