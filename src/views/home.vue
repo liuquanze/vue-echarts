@@ -12,7 +12,7 @@
                     <MenuItem name="page3">
                         page3
                     </MenuItem>
-                    <MenuItem name="page4">
+                    <MenuItem name="getAddress">
                         page4
                    </MenuItem>
                 </Menu>
