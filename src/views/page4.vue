@@ -1,100 +1,121 @@
 <template>
   <div class="page2">
-<!--    <Row class='content'>-->
-<!--      <Col span="8">-->
-<!--        <div class="list">-->
-<!--          <div class="left">-->
-<!--            <span class='title'><span class="title-4">（采集信息01）</span></span>-->
 
-<!--            echarts表1-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="list">-->
-<!--          <div class="left">-->
-<!--            <span class='title'><span class="title-8">（采集信息02）</span></span>-->
+    <!--内容部分-->
+    <div class="con left">
+      <!--数据总概-->
+      <div class="con_div">
+        <div class="con_div_text left">
+          <div class="con_div_text01 left">
+            <div class="left text01_div">
+              <p>指标1</p>
 
-<!--            echarts表2-->
-<!--          </div>-->
-<!--        </div>-->
+              <p>指标1对应数量</p>
 
-<!--      </Col>-->
-<!--      <Col span="8" >-->
-<!--        <div class="list" style="height: 820px;">-->
-<!--          <div class="left">-->
-<!--            <span class='title'><span class="title-4">（拓扑信息）</span></span>-->
-<!--&lt;!&ndash;            拓扑信息展示区域&ndash;&gt;-->
-<!--            <div style="position: center;border-radius: 10px;">-->
-<!--              <iframe src="https://www.meituan.com" style="height: 740px;width: 100%;border-radius: 10px;" ></iframe>-->
-<!--&lt;!&ndash;              <p>{{this.ip}}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;              <p>{{this.port}}</p>&ndash;&gt;-->
+            </div>
+          </div>
+          <div class="con_div_text01 right">
+            <div class="left text01_div">
+              <p>指标2</p>
+              <p>指标2对应数量</p>
+            </div>
+          </div>
+        </div>
+        <div class="con_div_text left">
+          <div class="con_div_text01 left">
+            <div class="left text01_div">
+              <p>指标3</p>
+              <p class="sky">指标3对应数量</p>
+            </div>
+          </div>
+          <div class="con_div_text01 right">
+            <div class="left text01_div">
+              <p>指标4</p>
+              <p class="sky">指标4对应数量</p>
+            </div>
+          </div>
+        </div>
+        <div class="con_div_text left">
+
+          <div class="con_div_text01 left">
+            <div class="left text01_div">
+              <p>指标5</p>
+              <p class="org">指标5对应数量</p>
+            </div>
+          </div>
+          <div class="con_div_text01 right">
+            <div class="left text01_div">
+              <p>指标6</p>
+              <p class="org">指标6对应数量</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--统计分析图-->
+      <div class="div_any">
+        <div class="left div_any01">
+          <div class="div_any_child">
+            <div class="div_any_title">图表1</div>
+<!--            <span class="angle1"></span>-->
+<!--            <span class="angle2"></span>-->
+<!--            <span class="angle3"></span>-->
+<!--            <span class="angle4"></span>-->
+
+          </div>
+          <div class="div_any_child">
+            <div class="div_any_title">图表2</div>
+
+          </div>
+        </div>
+        <div class="div_any02 left ">
+          <div class="div_any_child div_height">
+            <div class="div_any_title any_title_width">拓扑发现</div>
+            <iframe :src='address' style="height: 100%;width:100%;border-radius:20px;border: none"></iframe>
+          </div>
+        </div>
+        <div class="right div_any01">
+          <div class="div_any_child">
+            <div class="div_any_title">图表4</div>
+          </div>
+          <div class="div_any_child">
+            <div class="div_any_title">图表5</div>
+          </div>
+        </div>
+      </div>
+
+<!--      <div id="el-dialog" class="">-->
+<!--        <div class="xc_layer"></div>-->
+<!--        <div class="popBox" id="printView">-->
+<!--          <div class="ttBox"><span class="tt" id="reportTitle">第一医院</span><img src="../images/close.png" style="width: 30px;float: right;cursor: pointer;" title="关闭弹窗" class="close"/></div>-->
+<!--          <div class="txtBox" id="el-dialog_body">-->
+<!--            <div style="height:100%;width: 98%;margin-left: 1%;">-->
+<!--              <div class="left div_any01" style="width: 64%;">-->
+<!--                <div class="div_any_child">-->
+<!--                  <div class="div_any_title"><div type="text" class="demo-input" id="date1" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../images/title_4.png">门诊住院人次</div>-->
+<!--                  <p id="lineChart3" class="p_chart"></p>-->
+<!--                </div>-->
+<!--                <div class="div_any_child">-->
+<!--                  <div class="div_any_title"><div type="text" class="demo-input" id="date2" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../images/title_7.png">医疗费用</div>-->
+<!--                  <p id="lineChart4" class="p_chart"></p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="left div_any01"  style="width: 32%;">-->
+<!--                <div class="div_any_child">-->
+<!--                  <div class="div_any_title"><div type="text" class="demo-input" id="date3" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../images/title_18.png">病人年龄段分布</div>-->
+<!--                  <p id="pieChart2" class="p_chart"></p>-->
+<!--                </div>-->
+<!--                <div class="div_any_child">-->
+<!--                  <div class="div_any_title"><div type="text" class="demo-input" id="date4" style="display: inline-block;cursor: pointer;margin-right: 16px;"></div><img src="../images/title_20.png">医疗费用组成</div>-->
+<!--                  <p id="pieChart3" class="p_chart"></p>-->
+<!--                </div>-->
+<!--              </div>-->
+
 <!--            </div>-->
-
 <!--          </div>-->
 <!--        </div>-->
-<!--      </Col>-->
-<!--      <Col span="8">-->
-<!--        <div class="list">-->
-<!--          <div class="right">-->
-<!--            <span class='title'><span class="title-4">（采集信息03）</span></span>-->
+<!--      </div>-->
 
-
-<!--            echarts表3-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="list">-->
-<!--          <div class="right">-->
-<!--            <span class='title'><span class="title-8">（采集信息04）</span></span>-->
-
-<!--            echarts表4-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--      </Col>-->
-<!--    </Row>-->
-<!--&lt;!&ndash;    <Row class="bottom-list">&ndash;&gt;-->
-<!--&lt;!&ndash;      <Col span="16">&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="list">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="bottom">&ndash;&gt;-->
-<!--&lt;!&ndash;            <span class='title'><span class="title-10">（采集信息05）</span></span>&ndash;&gt;-->
-
-<!--&lt;!&ndash;            echarts表5&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="list">&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;          <div class="bottom">&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;            <span class='title'><span class="title-10">（采集信息06）</span></span>&ndash;&gt;&ndash;&gt;-->
-
-<!--&lt;!&ndash;&lt;!&ndash;            echarts表6&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="list">&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;          <div class="bottom">&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;            <span class='title'><span class="title-10">（采集信息07）</span></span>&ndash;&gt;&ndash;&gt;-->
-
-<!--&lt;!&ndash;&lt;!&ndash;            echarts表7&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;      </Col>&ndash;&gt;-->
-<!--&lt;!&ndash;      <Col span="8">&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="list right-bottom">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="bottom bottom1">&ndash;&gt;-->
-<!--&lt;!&ndash;            <span class='title'><span class="title-10">（采集信息08）</span></span>&ndash;&gt;-->
-
-<!--&lt;!&ndash;            echarts表8&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;      </Col>&ndash;&gt;-->
-<!--&lt;!&ndash;    </Row>&ndash;&gt;-->
-    <el-container>
-      <el-header ><h1>网络数据采集</h1></el-header>
-      <el-container>
-        <el-aside width="800px">Aside</el-aside>
-        <el-main style="height: 800px">
-          <iframe :src='address' style="height: 680px;width:100%">
-
-          </iframe></el-main>
-      </el-container>
-    </el-container>
+    </div>
 
 
 
@@ -151,40 +172,55 @@ export default {
   }
 }
 </script>
+<style>
+@import "../static/css/common.css";
+</style>
+<style>
+.angle1 {
+  display: inline-block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  left: 0;
+  border-top: 2px solid grey;
+  border-left: 2px solid grey;
 
-<style lang="less" scoped>
-.el-header, .el-footer {
-  background-color: #B3C0D1;
-  color: #333;
-  text-align: center;
-  line-height: 60px;
 }
 
-.el-aside {
-  background-color: #D3DCE6;
-  color: #333;
-  text-align: center;
-  line-height: 200px;
-  width: 500px;
+.angle2 {
+  display: inline-block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  right: 0;
+  border-top: 2px solid grey;
+  border-right: 2px solid grey;
+
 }
 
-.el-main {
-  background-color: #E9EEF3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
+.angle3 {
+  display: inline-block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid grey;
+  border-left: 2px solid grey;
+
 }
 
-body > .el-container {
-  margin-bottom: 40px;
-}
+.angle4 {
+  display: inline-block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid grey;
+  border-right: 2px solid grey;
 
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
 }
 </style>
