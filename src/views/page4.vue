@@ -13,16 +13,16 @@
             <!--                <div style=" display:inline-block;">主机数</div>     |-->
             <!--                <div style=" display:inline-block;">链路数</div>-->
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ switch_nums }}</div>
-              <div style="height: 50%;width: 100%">交换机数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ switch_nums }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">交换机数</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ hosts_nums }}</div>
-              <div style="height: 50%;width: 100%">主机数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ hosts_nums }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">主机数</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ links_nums }}</div>
-              <div style="height: 50%;width: 100%">链路数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ links_nums }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">链路数</div>
             </div>
           </div>
 
@@ -35,38 +35,38 @@
             <!--                <div style=" display:inline-block;">主机数</div>     |-->
             <!--                <div style=" display:inline-block;">链路数</div>-->
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ role }}</div>
-              <div style="height: 50%;width: 100%">控制器角色</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ role }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">控制器角色</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%;font-size: 18px">{{ switch_desc.hw_desc }}</div>
-              <div style="height: 50%;width: 100%">switch名称</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ switch_desc.hw_desc }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">switch名称</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ switch_desc.sw_desc }}</div>
-              <div style="height: 50%;width: 100%">switch版本</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ switch_desc.sw_desc }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">switch版本</div>
             </div>
           </div>
 
         </div>
         <div class="con_div_text left" style="text-align: center">
 
-          <p style="font-size: 15px;font-weight:bold;margin-top: 10px">拓扑数据</p>
+          <p style="font-size: 15px;font-weight:bold;margin-top: 10px">流量信息</p>
           <div style="margin-top: 35px">
             <!--                <div style=" display:inline-block;">交换机数</div>     |-->
             <!--                <div style=" display:inline-block;">主机数</div>     |-->
             <!--                <div style=" display:inline-block;">链路数</div>-->
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ switch_nums }}</div>
-              <div style="height: 50%;width: 100%">交换机数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ packet_count_total }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">传输数据包总数</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ hosts_nums }}</div>
-              <div style="height: 50%;width: 100%">主机数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ byte_count_total }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">传输字节总数</div>
             </div>
             <div class="topo">
-              <div style="height: 50%;width: 100%">{{ links_nums }}</div>
-              <div style="height: 50%;width: 100%">链路数</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">{{ flow_count_total }}</div>
+              <div style="height: 50%;width: 100%;font-size: 17px">传输flow总数</div>
             </div>
           </div>
         </div>
@@ -131,6 +131,12 @@ export default {
   },
   data() {
     return {
+      //网络总数据包数量
+      packet_count_total:0,
+      //网络总流数量
+      flow_count_total:0,
+      //网络总传输字节数
+      byte_count_total:0,
       //设置柱形图(packet_count&flow_count)x轴
       fig_2_x: [],
       //设置柱形图(packet_count&flow_count)y轴
@@ -285,13 +291,22 @@ export default {
       //获取交换机dpid数组
       let dpids = response.data;
       vm.fig_2_x = dpids;
+      let packet_count_total=0;
+      let flow_count_total=0;
+      let byte_count_total=0;
       for (let dpid = 1; dpid <= dpids.length; dpid++) {
         let packet_flow_count_response = await axios.get('/stats/aggregateflow/' + dpid);
         console.log(packet_flow_count_response.data[dpid][0].flow_count)
         vm.fig_2_y1.push(packet_flow_count_response.data[dpid][0].packet_count);
+        packet_count_total+=packet_flow_count_response.data[dpid][0].packet_count;
+        flow_count_total+=packet_flow_count_response.data[dpid][0].flow_count;
+        byte_count_total+=packet_flow_count_response.data[dpid][0].byte_count
         vm.fig_2_y2.push(packet_flow_count_response.data[dpid][0].flow_count);
         console.log()
       }
+      vm.packet_count_total=packet_count_total;
+      vm.flow_count_total=flow_count_total;
+      vm.byte_count_total=byte_count_total;
     }
 
 
