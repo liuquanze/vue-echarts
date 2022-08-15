@@ -24,6 +24,14 @@ export default {
             fontSize: 10,
           },
         },
+        toolbox: {
+          feature: {
+            dataView: {show: true, readOnly: false},
+            // magicType: {show: true, type: ['bar']},
+            // restore: {show: true},
+            // saveAsImage: {show: true}
+          }
+        },
         legend: {
           left: "11%",
           top: "15%",

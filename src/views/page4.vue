@@ -94,8 +94,9 @@
         </div>
         <div class="right div_any01">
           <div class="div_any_child">
-            <div class="div_any_title">图表4</div>
-            <!--            <bar-chart :config="configData4"></bar-chart>-->
+            <div class="div_any_title">数据包&flow统计</div>
+            <barChar_packet_count :xAxis="fig_2_x" :y1Axis="fig_2_y1" :y2Axis="fig_2_y2"></barChar_packet_count>
+
           </div>
           <div class="div_any_child">
             <div class="div_any_title">图表5</div>
@@ -117,21 +118,30 @@
 import axios from "axios";
 
 axios.defaults.baseURL = '/api';
-//引入柱形图
+//引入柱形图:流表规则数量
 const barChart = () => import('./components/page4/barChart');
+//引入柱形图：数据包计数
+const barChar_packet_count = () => import('./components/page4/barChart_packet_count');
 export default {
   name: 'page4',
   props: ['selectRangeDate'],
   components: {
-    barChart
+    barChart,
+    barChar_packet_count
   },
   data() {
     return {
+      //设置柱形图(packet_count&flow_count)x轴
+      fig_2_x: [],
+      //设置柱形图(packet_count&flow_count)y轴
+      fig_2_y1: [],
+      //设置柱形图（packet_count&flow_count）y轴
+      fig_2_y2:[],
       //存储所有交换机的dpid
       dpid: [],
-      //设置柱形图x轴
+      //设置柱形图(active_entry)x轴
       fig_1_x: [],
-      //设置柱形图y轴
+      //设置柱形图(active_entry)y轴
       fig_1_y: [],
       //柱形图假数据
       configData4: {
@@ -249,50 +259,39 @@ export default {
           });
     },
     //获取各个交换机的激活流表项数量
-
     async getActiveEntryNum() {
       const vm = this;
       //获取所有交换机的dpid
-      let response= await axios.get('/stats/switches')
-          // .then(function (response) {
-          //   //获取到交换机的dpid之后，请求对应的active_entry数量
-          //   //创建数组存储对应的dpid以及
-          //   console.log(response.data);
-          //   // let dpids = response.data;
-          //   //存储柱形图的x坐标
-          //   // vm.xAxis = response.data;
-          //   // const vm1=vm;
-          //   //根据dpid发送请求，得到每个switch对应的active_entry的数量
-          //   // for(let dpid=1;dpid<=dpids.length;dpid++){
-          //   //
-          //   //   axios.get('/stats/table/'+dpid)
-          //   //     .then(response=>{
-          //   //       //存储纵坐标
-          //   //       console.log(vm.yAxis)
-          //   //       console.log(response.data[dpid][0].active_count)
-          //   //       // response.data[dpid][0].active_count
-          //   //     })
-          //   //     .catch(function (error){
-          //   //       console.log(error)
-          //   //     })
-          //   // }
-          // })
-          // .catch(function (error) {
-          //   console.log(error);
-          // });
+      let response = await axios.get('/stats/switches');
       //获取交换机dpid数组
-      let dpids=response.data;
-      vm.fig_1_x=dpids;
-      console.log(vm.fig_1_x)
-      console.log(vm.fig_1_y)
-      for(let dpid=1;dpid<=dpids.length;dpid++){
-        let active_entry_response=await axios.get('/stats/table/'+dpid);
+      let dpids = response.data;
+      vm.fig_1_x = dpids;
+      // console.log(vm.fig_1_x)
+      // console.log(vm.fig_1_y)
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        let active_entry_response = await axios.get('/stats/table/' + dpid);
         // console.log(active_entry_response.data['1'][0].active_count)
         vm.fig_1_y.push(active_entry_response.data[dpid][0].active_count)
       }
       console.warn(vm.fig_1_x)
       console.warn(vm.fig_1_y)
 
+    },
+    //获取数据包总数和flow总数
+    async getPacketAndFlowCount(){
+      const vm = this;
+      //获取所有交换机的dpid
+      let response = await axios.get('/stats/switches');
+      //获取交换机dpid数组
+      let dpids = response.data;
+      vm.fig_2_x = dpids;
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        let packet_flow_count_response = await axios.get('/stats/aggregateflow/' + dpid);
+        console.log(packet_flow_count_response.data[dpid][0].flow_count)
+        vm.fig_2_y1.push(packet_flow_count_response.data[dpid][0].packet_count);
+        vm.fig_2_y2.push(packet_flow_count_response.data[dpid][0].flow_count);
+        console.log()
+      }
     }
 
 
@@ -316,6 +315,8 @@ export default {
     this.getSwitchDesc();
     //获取活跃的流表规则数量
     this.getActiveEntryNum();
+    //获取每个交换机的数据包总数和flow总数
+    this.getPacketAndFlowCount();
 
 
   },
