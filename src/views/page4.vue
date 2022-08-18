@@ -80,9 +80,11 @@
 
             <bar-chart :yAxis="fig_1_y" :xAxis="fig_1_x"></bar-chart>
           </div>
+<!--          流完成时间统计-->
           <div class="div_any_child">
-            <div class="div_any_title">图表2</div>
-            <!--            <bar-chart :config="configData4"></bar-chart>-->
+            <div class="div_any_title">流持续时间</div>
+<!--            柱状图-->
+            <barchart_duration_sec :yAxis="fig_duration_sec_y" :xAxis="fig_duration_sec_x"></barchart_duration_sec>
           </div>
         </div>
         <div class="div_any02 left ">
@@ -117,6 +119,7 @@
 
 import axios from "axios";
 
+
 axios.defaults.baseURL = '/api';
 //引入柱形图:流表规则数量
 const barChart = () => import('./components/page4/barChart');
@@ -124,13 +127,17 @@ const barChart = () => import('./components/page4/barChart');
 const barChar_packet_count = () => import('./components/page4/barChart_packet_count');
 //引入饼图
 const pieChart=()=>import('./components/page4/pieChart')
+//引入柱状图，统计流完成时间
+const barchart_duration_sec = () => import('./components/page4/barchart_duration_sec')
 export default {
   name: 'page4',
   props: ['selectRangeDate'],
   components: {
+    barchart_duration_sec,
     barChart,
     barChar_packet_count,
-    pieChart
+    pieChart,
+
   },
   data() {
     return {
@@ -150,6 +157,10 @@ export default {
       fig_2_y1: [],
       //设置柱形图（packet_count&flow_count）y轴
       fig_2_y2:[],
+      //设置柱状图（流完成时间）x轴
+      fig_duration_sec_x: [],
+      //设置柱状图（流完成时间）y轴
+      fig_duration_sec_y: [],
       //存储所有交换机的dpid
       dpid: [],
       //设置柱形图(active_entry)x轴
@@ -286,8 +297,29 @@ export default {
         // console.log(active_entry_response.data['1'][0].active_count)
         vm.fig_1_y.push(active_entry_response.data[dpid][0].active_count)
       }
-      console.warn(vm.fig_1_x)
-      console.warn(vm.fig_1_y)
+      //console.warn(vm.fig_1_x)
+      //console.warn(vm.fig_1_y)
+
+    },
+    //获取各个交换机的流完成时间
+    async getDuration_sec() {
+      const vm = this;
+      //获取所有交换机的dpid
+      let response = await axios.get('/stats/switches');
+      //获取交换机dpid数组
+      let dpids = response.data;
+      //柱状图的x轴
+      vm.fig_duration_sec_x = dpids;
+      //console.log(dpids);
+
+
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        let duration_sec_response = await axios.get('/stats/flow/' + dpid);
+        //console.log(duration_sec_response.data['1'][0].duration_sec)
+        vm.fig_duration_sec_y.push(duration_sec_response.data[dpid][0].duration_sec)
+      }
+      //console.warn(vm.fig_duration_sec_x)
+      //console.warn(vm.fig_duration_sec_y)
 
     },
     //获取数据包总数和flow总数
@@ -303,13 +335,13 @@ export default {
       let byte_count_total=0;
       for (let dpid = 1; dpid <= dpids.length; dpid++) {
         let packet_flow_count_response = await axios.get('/stats/aggregateflow/' + dpid);
-        console.log(packet_flow_count_response.data[dpid][0].flow_count)
+        //console.log(packet_flow_count_response.data[dpid][0].flow_count)
         vm.fig_2_y1.push(packet_flow_count_response.data[dpid][0].packet_count);
         packet_count_total+=packet_flow_count_response.data[dpid][0].packet_count;
         flow_count_total+=packet_flow_count_response.data[dpid][0].flow_count;
         byte_count_total+=packet_flow_count_response.data[dpid][0].byte_count
         vm.fig_2_y2.push(packet_flow_count_response.data[dpid][0].flow_count);
-        console.log()
+        //console.log()
       }
       vm.packet_count_total=packet_count_total;
       vm.flow_count_total=flow_count_total;
@@ -362,6 +394,8 @@ export default {
     this.getPacketAndFlowCount();
     //获取packet_in消息数量
     this.getPacketInCount();
+    //获取流持续时间
+    this.getDuration_sec();
 
 
   },

@@ -1,3 +1,5 @@
+修改vue.config.js里的地址，进行get、post请求
+
 # vue-echarts
 
 > A Vue.js project
@@ -18,13 +20,7 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-## 三个大屏模板 样式还是比较全的 包括世界地图、中国地图、canvas转盘等
-### page1 
-![image](src/assets/page1.jpg)
-### page2 
-![image](src/assets/page2.jpg)
-### page3 
-![image](src/assets/page3.jpg)
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 参照模板布局，使用echarts完成需要的网络状态数据可视化展示
+
+
