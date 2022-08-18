@@ -99,8 +99,8 @@
 
           </div>
           <div class="div_any_child">
-            <div class="div_any_title">图表5</div>
-            <!--            <bar-chart :config="configData4"></bar-chart>-->
+            <div class="div_any_title">Packet-in统计</div>
+            <pie-chart :pie_data="packet_in_count" :packet_count_total="packet_in_total"></pie-chart>
           </div>
         </div>
       </div>
@@ -122,15 +122,22 @@ axios.defaults.baseURL = '/api';
 const barChart = () => import('./components/page4/barChart');
 //引入柱形图：数据包计数
 const barChar_packet_count = () => import('./components/page4/barChart_packet_count');
+//引入饼图
+const pieChart=()=>import('./components/page4/pieChart')
 export default {
   name: 'page4',
   props: ['selectRangeDate'],
   components: {
     barChart,
-    barChar_packet_count
+    barChar_packet_count,
+    pieChart
   },
   data() {
     return {
+      //packet_in数据包总数
+      packet_in_total:0,
+      //packet_in数据包数量
+      packet_in_count:[],
       //网络总数据包数量
       packet_count_total:0,
       //网络总流数量
@@ -307,6 +314,27 @@ export default {
       vm.packet_count_total=packet_count_total;
       vm.flow_count_total=flow_count_total;
       vm.byte_count_total=byte_count_total;
+    },
+    //获取packet_in消息数量
+    async getPacketInCount(){
+      const vm=this;
+      let packet_in_count=[];
+      // let entry={};
+      let response=await axios.get('/packetIn/count')
+      console.error(response.data)
+      let sum=0;
+      for(let key in response.data){
+        // console.log(key+':'+response.data[key])
+        let entry={}
+        sum+=response.data[key];
+        entry.name=key.slice(-2);
+        entry.value=response.data[key];
+        packet_in_count.push(entry);
+      }
+      vm.packet_in_count=packet_in_count;
+      vm.packet_in_total=sum;
+      console.log(vm.packet_in_total+'haha ')
+      // console.log(vm.packet_in_count)
     }
 
 
@@ -332,6 +360,8 @@ export default {
     this.getActiveEntryNum();
     //获取每个交换机的数据包总数和flow总数
     this.getPacketAndFlowCount();
+    //获取packet_in消息数量
+    this.getPacketInCount();
 
 
   },
