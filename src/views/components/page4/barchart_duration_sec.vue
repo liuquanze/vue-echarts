@@ -74,9 +74,9 @@ export default {
           {
             type: 'value',
             scale: true,
-            max: 10000,
+            max: 1000,
             min: 0,
-            interval: 5000,
+            interval: 500,
             axisLine: {
               symbol: ['none', 'arrow'],
               symbolSize: [6, 6],
