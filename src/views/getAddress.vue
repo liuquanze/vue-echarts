@@ -66,7 +66,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('提交成功');
+          //alert('提交成功');
           //跳转到数据展示页面
           this.goToPage();
         } else {

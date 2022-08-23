@@ -70,7 +70,7 @@ export default {
                             showMaxLabel: false,
                             fontSize: 9
                         },
-                        name: '(个/秒)',
+                        name: '(个)',
                         nameGap: -10,
                         nameTextStyle: {
                             color: '#61B9C8',
@@ -115,7 +115,7 @@ export default {
                 ],
                 series: [
                     {
-                        name: 'packet个数',
+                        name: '流规则数目',
                         type: 'line',
                         smooth: true,
                         symbol: 'none',
