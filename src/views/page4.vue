@@ -99,7 +99,7 @@
         </div>
         <div class="right div_any01">
           <div class="div_any_child">
-            <div class="div_any_title">实时流规则数量统计</div>
+            <div class="div_any_title">流规则数量统计</div>
 <!--            <barChar_packet_count :xAxis="fig_2_x" :y1Axis="fig_2_y1" :y2Axis="fig_2_y2"></barChar_packet_count>-->
             <table_line_chart :xAxis="fig_line_table_x" :yAxis="fig_line_table_y"></table_line_chart>
 
@@ -577,15 +577,14 @@ export default {
     //获取交换机描述
     this.getSwitchDesc();
     //获取活跃的流表规则数量
-    this.getActiveEntryNum();
+    //this.getActiveEntryNum();
     //获取每个交换机的数据包总数和flow总数
-    this.getPacketAndFlowCount();
+    // this.getPacketAndFlowCount();
     //获取packet_in消息数量
     this.getPacketInCount();
     //获取流持续时间
-    this.getDuration_sec();
-    //获得flow统计
-    //this.getFlowCount();
+    //this.getDuration_sec();
+
 
     this.$nextTick(() =>{
       //每2秒执行packet统计
@@ -594,6 +593,8 @@ export default {
       setInterval(this.getPortCount,2000);
       //每两秒执行流规则数统计
       setInterval(this.getTableCount, 2000);
+      //获取每个交换机的数据包总数和flow总数
+      setInterval(this.getPacketAndFlowCount, 5000);
     })
 
 

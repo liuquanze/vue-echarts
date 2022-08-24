@@ -55,9 +55,9 @@ export default {
                     {//y1轴
                         type: 'value',
                         scale: true,
-                        max: 20,
+                        max: 40,
                         min: 0,
-                        interval: 2,//y间隔数
+                        interval: 5,//y间隔数
                         axisLine: {
                             symbol: ['none', 'arrow'],
                             symbolSize: [6, 6],
