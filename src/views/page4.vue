@@ -75,16 +75,19 @@
       <div class="div_any">
         <div class="left div_any01">
           <div class="div_any_child">
-            <div class="div_any_title">flow entry统计</div>
+            <div class="div_any_title">端口转发速率</div>
             <!--            <bar-chart :config="configData4" :xAxis="fig_1_x"></bar-chart>-->
 
-            <bar-chart :yAxis="fig_1_y" :xAxis="fig_1_x"></bar-chart>
+<!--            <bar-chart :yAxis="fig_1_y" :xAxis="fig_1_x"></bar-chart>-->
+            <port_line_chart :xAxis="fig_line_port_x" :yAxis="fig_line_port_y"></port_line_chart>
+
           </div>
 <!--          流完成时间统计-->
           <div class="div_any_child">
-            <div class="div_any_title">流持续时间</div>
+            <div class="div_any_title">流速率统计</div>
 <!--            柱状图-->
-            <barchart_duration_sec :yAxis="fig_duration_sec_y" :xAxis="fig_duration_sec_x"></barchart_duration_sec>
+<!--            <barchart_duration_sec :yAxis="fig_duration_sec_y" :xAxis="fig_duration_sec_x"></barchart_duration_sec>-->
+          <flow_line_chart :xAxis="fig_line_flow_x" :yAxis="fig_line_flow_y"></flow_line_chart>
           </div>
         </div>
         <div class="div_any02 left ">
@@ -96,8 +99,10 @@
         </div>
         <div class="right div_any01">
           <div class="div_any_child">
-            <div class="div_any_title">数据包&flow统计</div>
-            <barChar_packet_count :xAxis="fig_2_x" :y1Axis="fig_2_y1" :y2Axis="fig_2_y2"></barChar_packet_count>
+            <div class="div_any_title">流规则数量统计</div>
+<!--            <barChar_packet_count :xAxis="fig_2_x" :y1Axis="fig_2_y1" :y2Axis="fig_2_y2"></barChar_packet_count>-->
+            <table_line_chart :xAxis="fig_line_table_x" :yAxis="fig_line_table_y"></table_line_chart>
+
 
           </div>
           <div class="div_any_child">
@@ -122,31 +127,88 @@ import axios from "axios";
 
 axios.defaults.baseURL = '/api';
 //引入柱形图:流表规则数量
-const barChart = () => import('./components/page4/barChart');
+// const barChart = () => import('./components/page4/barChart');
 //引入柱形图：数据包计数
-const barChar_packet_count = () => import('./components/page4/barChart_packet_count');
+// const barChar_packet_count = () => import('./components/page4/barChart_packet_count');
 //引入饼图
 const pieChart=()=>import('./components/page4/pieChart')
 //引入柱状图，统计流完成时间
-const barchart_duration_sec = () => import('./components/page4/barchart_duration_sec')
+//const barchart_duration_sec = () => import('./components/page4/barchart_duration_sec')
+//引入曲线图,统计流量
+const flow_line_chart = () => import('./components/page4/lineChart_flow')
+//引入曲线图，统计端口速率
+const port_line_chart = () => import('./components/page4/lineChart_port')
+//引入曲线图，统计流表数
+const table_line_chart = () => import('./components/page4/lineChart_tablet')
 export default {
   name: 'page4',
   props: ['selectRangeDate'],
   components: {
-    barchart_duration_sec,
-    barChart,
-    barChar_packet_count,
+    //barchart_duration_sec,
+    // barChart,
+    // barChar_packet_count,
     pieChart,
+    flow_line_chart,
+    port_line_chart,
+    table_line_chart,
 
   },
   data() {
     return {
+      /* 流速率统计图所用参数 */
+      //每次更新的packet数据包个数
+      per_packet_count_total:0,
+      //上一次packet总和
+      last_packet_count:0,
+      //当前packet总和
+      cur_packet_count:0,
+      //统计flow的时间间隔
+      flow_count_time_interval :0,
+      //用来计算上一次更新数据包使用到的flag
+      packet_flag:0,
+      //设置折线图（统计flow）x轴
+      fig_line_flow_x:[],
+      //设置折线图（统计flow）y轴
+      fig_line_flow_y:[],
+
+
+      /*端口转发速率所用参数*/
+      //设置折线图（统计port速率）x轴
+      fig_line_port_x:[],
+      //设置折线图（统计port速率）y轴
+      fig_line_port_y:[],
+      //统计port的时间间隔
+      port_count_time_interval :0,
+      //每次更新的port发送的数据包数量
+      per_port_count_packet:0,
+      //当前数据包总数
+      cur_port_count_packet:0,
+      //上一次数据包总数
+      last_port_count_packet:0,
+      //用来计算上一次更新数据包使用到的flag
+      port_flag:0,
+      //端口总数
+      port_num:0,
+
+
+      /*流规则数目统计*/
+      //设置折线图（流表数）x轴
+      fig_line_table_x:[],
+      //设置折线图（流表数）y轴
+      fig_line_table_y:[],
+      //统计流表数的时间单位
+      table_time_interval:0,
+      //流表总数
+      table_count:0,
+
+
+
       //packet_in数据包总数
       packet_in_total:0,
       //packet_in数据包数量
       packet_in_count:[],
-      //网络总数据包数量
       packet_count_total:0,
+
       //网络总流数量
       flow_count_total:0,
       //网络总传输字节数
@@ -201,10 +263,13 @@ export default {
       centerBox: {
         width: 0,
         height: 0
-      }
+      },
+      timer:"",
     }
   },
   methods: {
+
+
     //获取交换机数量
     getSwitchNums() {
       const vm = this;
@@ -217,6 +282,7 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
+
     },
     //获取主机数量v1.0/topology/hosts
     getHostsNums() {
@@ -229,6 +295,7 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
+
     },
     //获取交换机之间链路数量
     getLinksNums() {
@@ -314,12 +381,14 @@ export default {
 
 
       for (let dpid = 1; dpid <= dpids.length; dpid++) {
+
         let duration_sec_response = await axios.get('/stats/flow/' + dpid);
         //console.log(duration_sec_response.data['1'][0].duration_sec)
         vm.fig_duration_sec_y.push(duration_sec_response.data[dpid][0].duration_sec)
       }
       //console.warn(vm.fig_duration_sec_x)
       //console.warn(vm.fig_duration_sec_y)
+
 
     },
     //获取数据包总数和flow总数
@@ -346,6 +415,125 @@ export default {
       vm.packet_count_total=packet_count_total;
       vm.flow_count_total=flow_count_total;
       vm.byte_count_total=byte_count_total;
+      //this.timer = setInterval(this.getPacketAndFlowCount, 2000);
+    },
+    //获取每次更新的packet数据包个数
+    async getPacketCount(){
+      const vm = this;
+      //获取所有交换机的dpid
+      let response = await axios.get('/stats/switches');
+      //获取交换机dpid数组
+      let dpids = response.data;
+
+      //压入y轴 -- 间隔时间
+      vm.fig_line_flow_x.push(vm.flow_count_time_interval);
+      //console.log(vm.flow_count_time_interval);
+
+      //设置时间间隔
+      vm.flow_count_time_interval += 2;
+
+      //当前数据包个数
+      vm.cur_packet_count = 0;
+
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        //获得dpid对应的flow
+        let packet_flow_count_response = await axios.get('/stats/aggregateflow/' + dpid);
+        //packet累加
+        vm.cur_packet_count+=packet_flow_count_response.data[dpid][0].packet_count;
+      }
+      //第一次启动将当前数据包的个数付给上一次数据包的个数
+      if(!vm.packet_flag) {
+        vm.last_packet_count = vm.cur_packet_count;
+        vm.packet_flag = 1;
+      }
+      //每次更新的数据包 = 当前 - 上一次
+      vm.per_packet_count_total = vm.cur_packet_count - vm.last_packet_count;
+      //把当前数据包个数付给上一次数据包个数，进行下一次轮询
+      vm.last_packet_count = vm.cur_packet_count;
+
+      //压入x轴
+      vm.fig_line_flow_y.push(vm.per_packet_count_total);
+    },
+    //获取端口速率
+    async getPortCount(){
+      const vm = this;
+      //获取所有交换机的dpid
+      let response = await axios.get('/stats/switches');
+      //获取交换机dpid数组
+      let dpids = response.data;
+
+      //压入x轴 -- 间隔时间
+      vm.fig_line_port_x.push(vm.port_count_time_interval);
+      //console.log(vm.flow_count_time_interval);
+
+      //设置时间间隔
+      vm.port_count_time_interval += 2;
+      vm.port_count_packet = 0;
+      vm.port_num = 0;
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        //获得dpid对应的port状态
+        let packet_port_count_response = await axios.get('/stats/port/' + dpid);
+        //获得相应交换机对应的端口数
+        vm.port_num += packet_port_count_response.data[dpid].length-1;
+
+        // //要计算的端口号
+        // let port_id = 0;
+        // for(port_id = 0; port_id < port_num - 1; port_id++)
+        // {
+        //   //packet累加
+        //   vm.cur_port_count_packet+=packet_port_count_response.data[dpid][port_id].tx_packets;
+        // }
+
+        // //第一次启动将当前数据包的个数付给上一次数据包的个数
+        // if(!vm.packet_flag) {
+        //   vm.last_packet_count = vm.cur_packet_count;
+        //   vm.packet_flag = 1;
+        // }
+        // //每次更新的数据包 = 当前 - 上一次
+        // vm.per_packet_count_total = vm.cur_packet_count - vm.last_packet_count;
+        // //把当前数据包个数付给上一次数据包个数，进行下一次轮询
+        // vm.last_packet_count = vm.cur_packet_count;
+
+        // if(!vm.port_flag){
+        //   vm.last_port_count_packet = vm.cur_port_count_packet;
+        //   vm.port_flag = 1;
+        // }
+        //
+        // vm.per_port_count_packet = vm.cur_port_count_packet - vm.last_port_count_packet;
+        // vm.last_port_count_packet = vm.cur_port_count_packet;
+      }
+      //压入y轴 --- 总数据包数 / 端口数
+      vm.fig_line_port_y.push(vm.per_packet_count_total/vm.port_num);
+    },
+    //获取流表数目
+    async getTableCount(){
+      const vm = this;
+      //获取所有交换机的dpid
+      let response = await axios.get('/stats/switches');
+      //获取交换机dpid数组
+      let dpids = response.data;
+
+      //压入x轴 -- 间隔时间
+      vm.fig_line_table_x.push(vm.table_time_interval);
+      //console.log(vm.flow_count_time_interval);
+
+      //设置时间间隔
+      vm.table_time_interval += 2;
+      vm.table_count = 0;
+
+      for (let dpid = 1; dpid <= dpids.length; dpid++) {
+        //获得dpid对应的流规则数
+        let table_count_response = await axios.get('/stats/table/' + dpid);
+
+        let table_num = table_count_response.data[dpid].length-1;
+        for(let table_id = 0; table_id < table_num; table_id++)
+        {
+          //流规则数累加
+          vm.table_count += table_count_response.data[dpid][table_id].active_count;
+        }
+      }
+      //压入y轴
+      vm.fig_line_table_y.push(vm.table_count);
     },
     //获取packet_in消息数量
     async getPacketInCount(){
@@ -365,7 +553,7 @@ export default {
       }
       vm.packet_in_count=packet_in_count;
       vm.packet_in_total=sum;
-      console.log(vm.packet_in_total+'haha ')
+      //console.log(vm.packet_in_total+'haha ')
       // console.log(vm.packet_in_count)
     }
 
@@ -389,13 +577,25 @@ export default {
     //获取交换机描述
     this.getSwitchDesc();
     //获取活跃的流表规则数量
-    this.getActiveEntryNum();
+    //this.getActiveEntryNum();
     //获取每个交换机的数据包总数和flow总数
-    this.getPacketAndFlowCount();
+    // this.getPacketAndFlowCount();
     //获取packet_in消息数量
     this.getPacketInCount();
     //获取流持续时间
-    this.getDuration_sec();
+    //this.getDuration_sec();
+
+
+    this.$nextTick(() =>{
+      //每2秒执行packet统计
+      setInterval(this.getPacketCount, 2000);
+      //每两秒执行端口速率统计
+      setInterval(this.getPortCount,2000);
+      //每两秒执行流规则数统计
+      setInterval(this.getTableCount, 2000);
+      //获取每个交换机的数据包总数和flow总数
+      setInterval(this.getPacketAndFlowCount, 5000);
+    })
 
 
   },
