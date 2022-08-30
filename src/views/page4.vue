@@ -308,22 +308,23 @@ export default {
   },
   methods: {
 
+    //在excel中添加相关参数
     getExcelData(){
-
-
+      //年
       let year = new Date().getFullYear();
-//月份是从0月开始获取的，所以要+1;
+      //月份是从0月开始获取的，所以要+1;
       let month = new Date().getMonth() +1;
-//日
+      //日
       let day = new Date().getDate();
-//时
+      //时
       let hour = new Date().getHours();
-//分
+      //分
       let minute = new Date().getMinutes();
-//秒
+      //秒
       let second = new Date().getSeconds();
+      //拼接当前时间
       let cur_time = year + '-' + month + '-' + day+ '   ' + hour + ':' + minute + ':' + second;
-
+      //压入excel表格中的一行
       this.json_data.push({
         //当前时间
         time_now: cur_time,
@@ -334,9 +335,6 @@ export default {
         //端口速率
         port_num: this.per_port_count_packet,
       });
-
-
-
     },
 
 
@@ -668,7 +666,7 @@ export default {
       setInterval(this.getTableCount, 2000);
       //获取每个交换机的数据包总数和flow总数
       setInterval(this.getPacketAndFlowCount, 5000);
-
+      //每2秒给excel表格中新增加一行
       setInterval(this.getExcelData, 2000);
     })
 
