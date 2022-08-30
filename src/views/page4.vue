@@ -101,7 +101,7 @@
             worksheet="My Worksheet"
             name="dataAnalysis.xls"
         >
-          下载相关数据
+          <el-button type="primary" icon="el-icon-download">导出相关数据表格</el-button>
         </download-excel>
         <div class="div_any02 left ">
           <div class="div_any_child div_height">
