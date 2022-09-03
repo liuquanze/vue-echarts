@@ -24,6 +24,9 @@
               <div style="height: 50%;width: 100%;font-size: 17px">{{ links_nums }}</div>
               <div style="height: 50%;width: 100%;font-size: 17px">链路数</div>
             </div>
+
+
+
           </div>
 
         </div>
@@ -69,6 +72,7 @@
               <div style="height: 50%;width: 100%;font-size: 17px">传输flow总数</div>
             </div>
           </div>
+
         </div>
       </div>
       <!--统计分析图-->
@@ -90,6 +94,15 @@
           <flow_line_chart :xAxis="fig_line_flow_x" :yAxis="fig_line_flow_y"></flow_line_chart>
           </div>
         </div>
+        <download-excel
+            class="btn btn-default"
+            :data="json_data"
+            :fields="json_fields"
+            worksheet="My Worksheet"
+            name="dataAnalysis.xls"
+        >
+          <el-button type="primary" icon="el-icon-download">导出相关数据表格</el-button>
+        </download-excel>
         <div class="div_any02 left ">
           <div class="div_any_child div_height">
             <div class="div_any_title any_title_width">拓扑发现</div>
@@ -122,7 +135,12 @@
 
 <script>
 
+//vue-json-excel组件
+import Vue from "vue";
+import JsonExcel from "vue-json-excel";
 import axios from "axios";
+
+Vue.component("downloadExcel", JsonExcel);
 
 
 axios.defaults.baseURL = '/api';
@@ -202,6 +220,27 @@ export default {
       table_count:0,
 
 
+      /*excel下载*/
+      json_fields: {
+        当前时间: "time_now",
+        流规则数量: "table_num",
+        流速率:"packet_num",
+        端口转发速率: "port_num",
+      },
+      //excel表格数据
+      json_data:[],
+      json_meta: [
+        [
+          {
+            " key ": " charset ",
+            " value ": " utf-8 "
+          }
+        ]
+      ],
+
+
+
+
 
       //packet_in数据包总数
       packet_in_total:0,
@@ -268,6 +307,37 @@ export default {
     }
   },
   methods: {
+
+    //在excel中添加相关参数
+    getExcelData(){
+      //年
+      let year = new Date().getFullYear();
+      //月份是从0月开始获取的，所以要+1;
+      let month = new Date().getMonth() +1;
+      //日
+      let day = new Date().getDate();
+      //时
+      let hour = new Date().getHours();
+      //分
+      let minute = new Date().getMinutes();
+      //秒
+      let second = new Date().getSeconds();
+      //拼接当前时间
+      let cur_time = year + '-' + month + '-' + day+ '   ' + hour + ':' + minute + ':' + second;
+      //压入excel表格中的一行
+      this.json_data.push({
+        //当前时间
+        time_now: cur_time,
+        //流规则
+        table_num: this.table_count,
+        //流速率
+        packet_num: this.per_packet_count_total,
+        //端口速率
+        port_num: this.per_port_count_packet,
+      });
+    },
+
+
 
 
     //获取交换机数量
@@ -503,6 +573,7 @@ export default {
         // vm.last_port_count_packet = vm.cur_port_count_packet;
       }
       //压入y轴 --- 总数据包数 / 端口数
+      vm.per_packet_count_total = vm.per_packet_count_total/vm.port_num;
       vm.fig_line_port_y.push(vm.per_packet_count_total/vm.port_num);
     },
     //获取流表数目
@@ -595,6 +666,8 @@ export default {
       setInterval(this.getTableCount, 2000);
       //获取每个交换机的数据包总数和flow总数
       setInterval(this.getPacketAndFlowCount, 5000);
+      //每2秒给excel表格中新增加一行
+      setInterval(this.getExcelData, 2000);
     })
 
 
